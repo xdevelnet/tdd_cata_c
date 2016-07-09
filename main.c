@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <iso646.h>
+#include <string.h>
 
 int add(char *numbers) {
-    return 0;
+    char *comma = strchr(numbers, ',');
+    if (comma == NULL) return atoi(numbers); else {
+        return atoi(numbers)+atoi(comma+1); // +1 means character right after comma
+    }
 }
 
 bool add_test_empty() {
