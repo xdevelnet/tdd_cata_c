@@ -8,9 +8,11 @@
 
 const char different_delim_flag[] = "//";
 
+int exception;
+
 int add(char *numbers) {
-	int sum = 0;
-	char *ending = 0;
+	if (*numbers == 0) return 0;
+
 	char different_delimiter = ',';
 
 	if (strncmp(numbers, different_delim_flag, 2) == 0) {
@@ -19,8 +21,16 @@ int add(char *numbers) {
 		numbers++;
 	}
 
+	int sum = 0;
+	int tmpsum;
+	char *ending;
 	while(forever) {
-		sum += (int) strtol(numbers, &ending, 10);
+		tmpsum = (int) strtol(numbers, &ending, 10);
+		if (tmpsum < 0) {
+			fprintf(stdout, "negatives not allowed\n");
+			exception = 1;
+		}
+		sum += tmpsum;
 		if (*ending == 0) break; else
 		if (*ending == ',' or *ending == '\n' or *ending == different_delimiter) numbers = ending +1; else break;
 	}
@@ -58,6 +68,12 @@ bool add_test_different_delimiter() {
 	return false;
 }
 
+bool add_test_negative_exception() {
+	add("99,-11,-7"); // should we care about result with such "good" exception handling?
+	if (exception == 1) return true;
+	return false;
+}
+
 void perform_test(char *test_name, bool(testfunc)()) {
 	if (testfunc() == true) printf("%s: passed.\n\n", test_name); else printf("%s: NOT passed.\n\n", test_name);
 }
@@ -69,6 +85,7 @@ int main(int argc, char **argv) {
 	perform_test("Testing unknown amount of numbers", add_test_unknown_amount);
 	perform_test("Testing newline delimiter", add_test_newline_delimiter);
 	perform_test("Testing different delimiter", add_test_different_delimiter);
+	perform_test("Testing negative exception", add_test_negative_exception);
 
 	return EXIT_SUCCESS;
 }
