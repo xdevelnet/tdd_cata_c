@@ -6,14 +6,23 @@
 
 #define forever 1
 
+const char different_delim_flag[] = "//";
+
 int add(char *numbers) {
 	int sum = 0;
 	char *ending = 0;
+	char different_delimiter = ',';
+
+	if (strncmp(numbers, different_delim_flag, 2) == 0) {
+		numbers += sizeof(different_delim_flag)-1;
+		different_delimiter = *numbers;
+		numbers++;
+	}
 
 	while(forever) {
 		sum += (int) strtol(numbers, &ending, 10);
 		if (*ending == 0) break; else
-		if (*ending == ',' or *ending == '\n') numbers = ending +1; else break;
+		if (*ending == ',' or *ending == '\n' or *ending == different_delimiter) numbers = ending +1; else break;
 	}
 
 	return sum;
@@ -44,6 +53,11 @@ bool add_test_newline_delimiter() {
 	return false;
 }
 
+bool add_test_different_delimiter() {
+	if (add("//z\n3,5z1") == 9) return true;
+	return false;
+}
+
 void perform_test(char *test_name, bool(testfunc)()) {
 	if (testfunc() == true) printf("%s: passed.\n\n", test_name); else printf("%s: NOT passed.\n\n", test_name);
 }
@@ -54,6 +68,7 @@ int main(int argc, char **argv) {
 	perform_test("Testing two number", add_test_two_numbers);
 	perform_test("Testing unknown amount of numbers", add_test_unknown_amount);
 	perform_test("Testing newline delimiter", add_test_newline_delimiter);
+	perform_test("Testing different delimiter", add_test_different_delimiter);
 
 	return EXIT_SUCCESS;
 }
