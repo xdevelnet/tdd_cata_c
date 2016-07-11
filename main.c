@@ -20,34 +20,34 @@ int add(char *numbers) {
 }
 
 bool add_test_empty() {
-    if (add("") == 0) return true;
-    return false;
+	if (add("") == 0) return true;
+	return false;
 }
 
 bool add_test_one_number() {
-    if (add("5") == 5) return true;
-    return false;
+	if (add("5") == 5) return true;
+	return false;
 }
 
 bool add_test_two_numbers() {
-    if (add("5,7") == 12) return true;
-    return false;
+	if (add("5,7") == 12) return true;
+	return false;
 }
 
 bool add_test_unknown_amount() {
-    if (add("5,7,88,911,0,3") == 1014) return true;
-    return false;
+	if (add("5,7,88,911,0,3") == 1014) return true;
+	return false;
 }
 
 void perform_test(char *test_name, bool(testfunc)()) {
-    if (testfunc() == true) printf("%s passed.\n\n", test_name); else printf("%s not passed.\n\n", test_name);
+	if (testfunc() == true) printf("%s: passed.\n\n", test_name); else printf("%s: NOT passed.\n\n", test_name);
 }
 
 int main(int argc, char **argv) {
-    perform_test("Testing empty string", add_test_empty);
-    perform_test("Testing one number", add_test_one_number);
-    perform_test("Testing two number", add_test_two_numbers);
-    perform_test("Testing unknown amount of numbers", add_test_unknown_amount);
+	perform_test("Testing empty string", add_test_empty);
+	perform_test("Testing one number", add_test_one_number);
+	perform_test("Testing two number", add_test_two_numbers);
+	perform_test("Testing unknown amount of numbers", add_test_unknown_amount);
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
