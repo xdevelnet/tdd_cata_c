@@ -12,8 +12,8 @@ int add(char *numbers) {
 
 	while(forever) {
 		sum += (int) strtol(numbers, &ending, 10);
-		if (*ending == 0) break;
-		if (*ending == ',') numbers = ending +1;
+		if (*ending == 0) break; else
+		if (*ending == ',' or *ending == '\n') numbers = ending +1; else break;
 	}
 
 	return sum;
@@ -39,6 +39,11 @@ bool add_test_unknown_amount() {
 	return false;
 }
 
+bool add_test_newline_delimiter() {
+	if (add("7,9\n5,1,3") == 25) return true;
+	return false;
+}
+
 void perform_test(char *test_name, bool(testfunc)()) {
 	if (testfunc() == true) printf("%s: passed.\n\n", test_name); else printf("%s: NOT passed.\n\n", test_name);
 }
@@ -48,6 +53,7 @@ int main(int argc, char **argv) {
 	perform_test("Testing one number", add_test_one_number);
 	perform_test("Testing two number", add_test_two_numbers);
 	perform_test("Testing unknown amount of numbers", add_test_unknown_amount);
+	perform_test("Testing newline delimiter", add_test_newline_delimiter);
 
 	return EXIT_SUCCESS;
 }
