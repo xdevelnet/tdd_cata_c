@@ -30,6 +30,7 @@ int add(char *numbers) {
 			fprintf(stdout, "negatives not allowed\n");
 			exception = 1;
 		}
+		if (tmpsum > 1000) tmpsum -= 1000;
 		sum += tmpsum;
 		if (*ending == 0) break; else
 		if (*ending == ',' or *ending == '\n' or *ending == different_delimiter) numbers = ending +1; else break;
@@ -73,6 +74,11 @@ bool add_test_negative_exception() {
 	if (exception == 1) return true;
 	return false;
 }
+bool add_test_bigger_than_thousand() {
+	if (add("466,913,1009,0,1") == 1389) return true;
+	return false;
+}
+
 
 void perform_test(char *test_name, bool(testfunc)()) {
 	if (testfunc() == true) printf("%s: passed.\n\n", test_name); else printf("%s: NOT passed.\n\n", test_name);
@@ -86,6 +92,7 @@ int main(int argc, char **argv) {
 	perform_test("Testing newline delimiter", add_test_newline_delimiter);
 	perform_test("Testing different delimiter", add_test_different_delimiter);
 	perform_test("Testing negative exception", add_test_negative_exception);
+	perform_test("Testing numbers > 1000", add_test_bigger_than_thousand);
 
 	return EXIT_SUCCESS;
 }
