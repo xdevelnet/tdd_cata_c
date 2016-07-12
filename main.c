@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <iso646.h>
 #include <string.h>
-#include <unistd.h>
 
 #define forever 1
 
