@@ -6,54 +6,54 @@
 
 #define forever 1
 
-const char different_delim_flag[] = "//";
+const char different_delim_flag[] = "//"; // sizeof() == 3
 
 int exception;
 
 size_t linelen(const char *s) {
 	const char *original = s;
-	while(1) {
+	while(forever) {
 		if (*s == 0 or *s == '\n') break;
 		s++;
 	}
 	return s - original;
 }
 
-int add(char *numbers) {
-	if (*numbers == 0) return 0;
+size_t is_delimiter(char *str, char *possibledelimiter) {
+	if (str == NULL or possibledelimiter == NULL or *possibledelimiter == 0 or *str == 0) return 0;
+	if ((*str == ',' or *str == '\n') and ((*(str + 1) >= '0' and *(str + 1) <= '9') or *(str + 1) == '-')) return 1;
 
-	char *different_delimiter = ",";
-	size_t delimlength = 1;
+	size_t delimlength = 0;
 
-	if (strncmp(numbers, different_delim_flag, 2) == 0) {
-		numbers += sizeof(different_delim_flag) - 1;
-		delimlength = linelen(numbers);
-		different_delimiter = numbers;
-		if (delimlength > 1 and *numbers == '[') {
-			different_delimiter = numbers + 1;
-			numbers += delimlength;
-			delimlength -= 2;
-		} else {
-			numbers += delimlength;
-		}
+	if (strncmp(possibledelimiter, different_delim_flag, sizeof(different_delim_flag) -1) == 0) {
+		if (*(possibledelimiter += sizeof(different_delim_flag) - 1) != '[' and *str == *possibledelimiter) return 1;
+		delimlength = linelen(++possibledelimiter) - 1;
+		if (strncmp(str, possibledelimiter, delimlength) == 0) return delimlength;
 	}
+	return 0;
+}
 
+int add(char *numbers_str) {
+	if (*numbers_str == 0) return 0;
+
+	char *starting_part_of_str = numbers_str;
 	int sum = 0;
 	int tmpsum;
 	char *ending;
+	size_t length;
+
+	if (strncmp(numbers_str, different_delim_flag, sizeof(different_delim_flag) - 1) == 0) numbers_str += linelen(numbers_str) + 1;
+
+
 	while(forever) {
-		tmpsum = (int) strtol(numbers, &ending, 10);
+		tmpsum = (int) strtol(numbers_str, &ending, 10);
 		if (tmpsum < 0) {
 			fprintf(stdout, "negatives not allowed\n");
 			exception = 1;
 		}
 		if (tmpsum > 1000) tmpsum -= 1000;
 		sum += tmpsum;
-		if (*ending == 0) break; else
-		if (*ending == ',' or *ending == '\n') numbers = ending +1; else
-		if (strncmp(ending, different_delimiter, delimlength) == 0) {
-			numbers = ending + delimlength;
-		} else break;
+		if ((length = is_delimiter(ending, starting_part_of_str)) > 0) numbers_str = ending + length; else break;
 	}
 	return sum;
 }
@@ -116,7 +116,6 @@ int main(int argc, char **argv) {
 	perform_test("Testing different delimiter", add_test_different_delimiter);
 	perform_test("Testing negative exception", add_test_negative_exception);
 	perform_test("Testing numbers > 1000", add_test_bigger_than_thousand);
-	perform_test("Testing variable-lenght delimiter", add_test_variable_length_delimiter);
-
+	perform_test("Testing variable-length delimiter", add_test_variable_length_delimiter);
 	return EXIT_SUCCESS;
 }
