@@ -27,8 +27,15 @@ size_t is_delimiter(char *str, char *possibledelimiter) {
 
 	if (strncmp(possibledelimiter, different_delim_flag, sizeof(different_delim_flag) -1) == 0) {
 		if (*(possibledelimiter += sizeof(different_delim_flag) - 1) != '[' and *str == *possibledelimiter) return 1;
-		delimlength = linelen(++possibledelimiter) - 1;
-		if (strncmp(str, possibledelimiter, delimlength) == 0) return delimlength;
+
+		char *search;
+		while (forever) {
+			search = strchr(++possibledelimiter, ']');
+			if (search == NULL or search > linelen(possibledelimiter) + possibledelimiter) break;
+			delimlength = search - possibledelimiter;
+			if (strncmp(str, possibledelimiter, delimlength) == 0) return delimlength;
+			possibledelimiter = search + 1;
+		}
 	}
 	return 0;
 }
@@ -103,6 +110,11 @@ bool add_test_variable_length_delimiter() {
 	return false;
 }
 
+bool add_test_variable_length_multiple_delimiters() {
+	if (add("//[abc][def]\n1,2,3abc4def5") == 15) return true;
+	return false;
+}
+
 void perform_test(char *test_name, bool(testfunc)()) {
 	if (testfunc() == true) printf("%s: passed.\n\n", test_name); else printf("%s: NOT passed.\n\n", test_name);
 }
@@ -117,5 +129,6 @@ int main(int argc, char **argv) {
 	perform_test("Testing negative exception", add_test_negative_exception);
 	perform_test("Testing numbers > 1000", add_test_bigger_than_thousand);
 	perform_test("Testing variable-length delimiter", add_test_variable_length_delimiter);
+	perform_test("Testing variable-length multiple delimiters", add_test_variable_length_multiple_delimiters);
 	return EXIT_SUCCESS;
 }
